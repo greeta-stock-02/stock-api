@@ -1,0 +1,150 @@
+version: "3.8"
+
+networks:
+  stock:
+    driver: bridge
+
+services:
+  
+  # Backing Services
+
+  stock-postgres:
+    image: postgres:15.3
+    container_name: "stock-postgres"
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./docker-conf/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - stock
+
+  stock-mongodb:
+    image: mongo:6.0.6
+    container_name: "stock-mongodb"
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: "echo 'db.stats().ok' | mongosh localhost:27017/foodorderingdb --quiet"
+    networks:
+      - stock
+
+  stock-redis:
+    image: "redis:7.0"
+    container_name: "stock-redis"
+    ports:
+      - 6379:6379
+    networks:
+      - stock
+
+  keycloak-postgres:
+    image: postgres:15.3
+    container_name: keycloak_postgres
+    ports:
+      - "5433:5433"
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=password
+    healthcheck:
+      test: "pg_isready -U postgres"
+    networks:
+      - stock
+  
+  stock-keycloak:
+    image: quay.io/keycloak/keycloak:22.0.1
+    container_name: stock-keycloak
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=postgres
+      - KC_DB_URL_HOST=keycloak-postgres
+      - KC_DB_URL_DATABASE=keycloak
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=password
+      - KC_DB_PORT=5433
+      - KC_HEALTH_ENABLED=true
+    ports:
+      - "8080:8080"
+    command: start-dev
+    depends_on:
+      - keycloak-postgres
+    healthcheck:
+      test: "curl -f http://book-keycloak:8080/health/ready || exit 1"
+    networks:
+      - stock
+
+
+  zipkin:
+    image: openzipkin/zipkin:2.24.3
+    container_name: zipkin
+    restart: unless-stopped
+    ports:
+      - "9411:9411"
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "9411" ]
+    networks:
+      - stock
+
+  axonserver:
+    image: axoniq/axonserver:latest-jdk-17-dev
+    hostname: axonserver
+    environment:
+      - AXONIQ_AXONSERVER_DEVMODE_ENABLED=true
+    volumes:
+      - axonserver-data:/axonserver/data
+      - axonserver-events:/axonserver/events
+      - axonserver-plugins:/axonserver/plugins
+      - axonserver-config:/axonserver/config:ro
+    ports:
+      - '8024:8024'
+      - '8124:8124'
+      - '8224:8224'
+    networks:
+      - stock
+
+  stock-mysql:
+    image: mysql:8.0.33
+    container_name: "stock-mysql"
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=customerdb
+    healthcheck:
+      test: "mysqladmin ping -u root -p$${MYSQL_ROOT_PASSWORD}"
+    networks:
+      - stock
+
+
+
+volumes:
+  axonserver-data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/volumes/data
+  axonserver-events:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/volumes/events
+  axonserver-plugins:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/volumes/plugins
+  axonserver-config:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/volumes/config
