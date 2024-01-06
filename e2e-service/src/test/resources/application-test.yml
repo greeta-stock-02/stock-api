@@ -1,3 +1,2 @@
-spring.cloud.openfeign.client.config.department.url=https://erp.greeta.net/department
-spring.cloud.openfeign.client.config.testData.url=https://erp.greeta.net/department/test-data
-feign.httpclient.disableSslValidation=true
+spring.cloud.openfeign.client.config.order.url=http://erp.greeta.net/department
+spring.cloud.openfeign.client.config.product.url=https://erp.greeta.net/department/test-data

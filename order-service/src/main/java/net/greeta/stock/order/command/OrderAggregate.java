@@ -5,13 +5,10 @@
  */
 package net.greeta.stock.order.command;
 
-import net.greeta.stock.core.events.order.OrderApprovedEvent;
-import net.greeta.stock.core.events.order.OrderCreatedEvent;
-import net.greeta.stock.core.events.order.OrderRejectedEvent;
-import net.greeta.stock.core.model.OrderStatus;
-import net.greeta.stock.order.command.commands.ApproveOrderCommand;
-import net.greeta.stock.order.command.commands.CreateOrderCommand;
-import net.greeta.stock.order.command.commands.RejectOrderCommand;
+import net.greeta.stock.order.events.OrderApprovedEvent;
+import net.greeta.stock.order.events.OrderCreatedEvent;
+import net.greeta.stock.order.events.OrderRejectedEvent;
+import net.greeta.stock.order.model.OrderStatus;
 
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;

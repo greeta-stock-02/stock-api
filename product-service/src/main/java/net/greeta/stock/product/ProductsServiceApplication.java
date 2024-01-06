@@ -17,7 +17,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
-import net.greeta.stock.product.core.errorhandling.ProductsServiceEventsErrorHandler;
+import net.greeta.stock.product.errorhandling.ProductsServiceEventsErrorHandler;
 
 @EnableDiscoveryClient
 @SpringBootApplication

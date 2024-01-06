@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import net.greeta.stock.product.command.CreateProductCommand;
-import net.greeta.stock.product.core.data.ProductLookupEntity;
-import net.greeta.stock.product.core.data.ProductLookupRepository;
+import net.greeta.stock.product.data.ProductLookupEntity;
+import net.greeta.stock.product.data.ProductLookupRepository;
 
 @Component
 public class CreateProductCommandInterceptor implements MessageDispatchInterceptor<CommandMessage<?>> {

@@ -1,11 +1,11 @@
 package net.greeta.stock.order.query;
 
-import net.greeta.stock.order.core.data.OrderEntity;
-import net.greeta.stock.order.core.data.OrdersRepository;
+import net.greeta.stock.order.data.OrderEntity;
+import net.greeta.stock.order.data.OrdersRepository;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Component;
 
-import net.greeta.stock.order.core.model.OrderSummary;
+import net.greeta.stock.order.dto.OrderSummaryDto;
 
 @Component
 public class OrderQueriesHandler {
@@ -17,9 +17,9 @@ public class OrderQueriesHandler {
 	}
 
 	@QueryHandler
-	public OrderSummary findOrder(FindOrderQuery findOrderQuery) {
+	public OrderSummaryDto findOrder(FindOrderQuery findOrderQuery) {
 		OrderEntity orderEntity = ordersRepository.findByOrderId(findOrderQuery.getOrderId());
-		return new OrderSummary(orderEntity.getOrderId(), 
+		return new OrderSummaryDto(orderEntity.getOrderId(),
 				orderEntity.getOrderStatus(), "");
 	}
 

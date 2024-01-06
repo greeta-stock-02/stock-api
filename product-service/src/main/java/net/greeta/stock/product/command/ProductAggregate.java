@@ -1,8 +1,8 @@
 package net.greeta.stock.product.command;
 
-import net.greeta.stock.core.commands.ReserveProductCommand;
-import net.greeta.stock.core.events.order.ProductReservedEvent;
-import net.greeta.stock.core.events.product.ProductCreatedEvent;
+import net.greeta.stock.product.commands.ReserveProductCommand;
+import net.greeta.stock.order.events.ProductReservedEvent;
+import net.greeta.stock.product.events.ProductCreatedEvent;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;

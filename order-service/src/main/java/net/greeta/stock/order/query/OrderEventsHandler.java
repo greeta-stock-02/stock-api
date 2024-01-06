@@ -5,11 +5,11 @@
  */
 package net.greeta.stock.order.query;
 
-import net.greeta.stock.order.core.data.OrderEntity;
-import net.greeta.stock.order.core.data.OrdersRepository;
-import net.greeta.stock.core.events.order.OrderApprovedEvent;
-import net.greeta.stock.core.events.order.OrderCreatedEvent;
-import net.greeta.stock.core.events.order.OrderRejectedEvent;
+import net.greeta.stock.order.data.OrderEntity;
+import net.greeta.stock.order.data.OrdersRepository;
+import net.greeta.stock.order.events.OrderApprovedEvent;
+import net.greeta.stock.order.events.OrderCreatedEvent;
+import net.greeta.stock.order.events.OrderRejectedEvent;
 
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;

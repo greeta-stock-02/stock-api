@@ -1,7 +1,7 @@
 package net.greeta.stock.product.query;
 
-import net.greeta.stock.product.core.data.ProductEntity;
-import net.greeta.stock.product.core.data.ProductsRepository;
+import net.greeta.stock.product.data.ProductEntity;
+import net.greeta.stock.product.data.ProductsRepository;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.eventhandling.ResetHandler;
@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
-import net.greeta.stock.core.events.product.ProductCreatedEvent;
-import net.greeta.stock.core.events.order.ProductReservedEvent;
+import net.greeta.stock.product.events.ProductCreatedEvent;
+import net.greeta.stock.order.events.ProductReservedEvent;
 
 @Component
 @ProcessingGroup("product-group")

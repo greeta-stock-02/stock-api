@@ -1,12 +1,12 @@
 package net.greeta.stock.order.saga;
 
-import net.greeta.stock.core.commands.ReserveProductCommand;
-import net.greeta.stock.core.events.order.OrderApprovedEvent;
-import net.greeta.stock.core.events.order.OrderCreatedEvent;
-import net.greeta.stock.core.events.order.OrderRejectedEvent;
-import net.greeta.stock.core.events.order.ProductReservedEvent;
-import net.greeta.stock.order.command.commands.RejectOrderCommand;
-import net.greeta.stock.order.core.model.OrderSummary;
+import net.greeta.stock.product.commands.ReserveProductCommand;
+import net.greeta.stock.order.events.OrderApprovedEvent;
+import net.greeta.stock.order.events.OrderCreatedEvent;
+import net.greeta.stock.order.events.OrderRejectedEvent;
+import net.greeta.stock.order.events.ProductReservedEvent;
+import net.greeta.stock.order.command.RejectOrderCommand;
+import net.greeta.stock.order.dto.OrderSummaryDto;
 import net.greeta.stock.order.query.FindOrderQuery;
 import org.axonframework.commandhandling.CommandCallback;
 import org.axonframework.commandhandling.CommandMessage;
@@ -87,7 +87,7 @@ public class OrderSaga {
 		LOGGER.info("Order is approved. Order Saga is complete for orderId: " + orderApprovedEvent.getOrderId());
 	    //SagaLifecycle.end();
 		queryUpdateEmitter.emit(FindOrderQuery.class, query -> true,
-				new OrderSummary(orderApprovedEvent.getOrderId(), 
+				new OrderSummaryDto(orderApprovedEvent.getOrderId(),
 						orderApprovedEvent.getOrderStatus(),
 						""));
 	}
@@ -98,7 +98,7 @@ public class OrderSaga {
 		LOGGER.info("Successfully rejected order with id " + orderRejectedEvent.getOrderId());
 		
 		queryUpdateEmitter.emit(FindOrderQuery.class, query -> true, 
-				new OrderSummary(orderRejectedEvent.getOrderId(), 
+				new OrderSummaryDto(orderRejectedEvent.getOrderId(),
 						orderRejectedEvent.getOrderStatus(),
 						orderRejectedEvent.getReason()));
 	}
