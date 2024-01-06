@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import net.greeta.stock.core.events.product.ProductCreatedEvent;
-import net.greeta.stock.core.events.order.ProductReservationCancelledEvent;
 import net.greeta.stock.core.events.order.ProductReservedEvent;
 
 @Component
@@ -65,23 +64,6 @@ public class ProductEventsHandler {
  	
 		LOGGER.info("ProductReservedEvent is called for productId:" + productReservedEvent.getProductId() +
 				" and orderId: " + productReservedEvent.getOrderId());
-	}
-	
-	@EventHandler
-	public void on(ProductReservationCancelledEvent productReservationCancelledEvent) {
-		ProductEntity currentlyStoredProduct =  productsRepository.findByProductId(productReservationCancelledEvent.getProductId());
-	
-		LOGGER.debug("ProductReservationCancelledEvent: Current product quantity " 
-		+ currentlyStoredProduct.getQuantity() );
-		
-		int newQuantity = currentlyStoredProduct.getQuantity() + productReservationCancelledEvent.getQuantity();
-		currentlyStoredProduct.setQuantity(newQuantity);
-		
-		productsRepository.save(currentlyStoredProduct);
-		
-		LOGGER.debug("ProductReservationCancelledEvent: New product quantity " 
-		+ currentlyStoredProduct.getQuantity() );
-	
 	}
 	
 	@ResetHandler

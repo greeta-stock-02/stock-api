@@ -57,17 +57,6 @@ spring:
         locator:
           enabled: true
       routes:
-        - id: user
-          uri: ${USER_SERVICE_URL:http://localhost:9001}
-          predicates:
-            - Path=/user/**
-          filters:
-            - RewritePath=/user/(?<path>.*), /$\{path}
-            - name: CircuitBreaker
-              args:
-                name: userCircuitBreaker
-                fallbackUri: forward:/stock-fallback
-
         - id: product
           uri: ${PRODUCT_SERVICE_URL:http://localhost:9002}
           predicates:
@@ -88,39 +77,6 @@ spring:
             - name: CircuitBreaker
               args:
                 name: orderCircuitBreaker
-                fallbackUri: forward:/stock-fallback
-
-        - id: customer
-          uri: ${CUSTOMER_SERVICE_URL:http://localhost:9005}
-          predicates:
-            - Path=/customer/**
-          filters:
-            - RewritePath=/customer/(?<path>.*), /$\{path}
-            - name: CircuitBreaker
-              args:
-                name: customerCircuitBreaker
-                fallbackUri: forward:/stock-fallback
-
-        - id: restaurant
-          uri: ${RESTAURANT_SERVICE_URL:http://localhost:9006}
-          predicates:
-            - Path=/restaurant/**
-          filters:
-            - RewritePath=/restaurant/(?<path>.*), /$\{path}
-            - name: CircuitBreaker
-              args:
-                name: restaurantCircuitBreaker
-                fallbackUri: forward:/stock-fallback
-
-        - id: food-ordering
-          uri: ${FOOD_ORDERING_SERVICE_URL:http://localhost:9007}
-          predicates:
-            - Path=/food-ordering/**
-          filters:
-            - RewritePath=/food-ordering/(?<path>.*), /$\{path}
-            - name: CircuitBreaker
-              args:
-                name: foodOrderingCircuitBreaker
                 fallbackUri: forward:/stock-fallback
 
   redis:
@@ -215,15 +171,7 @@ springdoc:
       # - url: /v3/api-docs
       #   name: API Gateway Service
       #   primaryName: API Gateway Service
-      - url: /user/v3/api-docs
-        name: User Service
       - url: /product/v3/api-docs
         name: Product Service
       - url: /order/v3/api-docs
         name: Order Service
-      - url: /customer/v3/api-docs
-        name: Customer Service
-      - url: /restaurant/v3/api-docs
-        name: Restaurant Service
-      - url: /food-ordering/v3/api-docs
-        name: Food Ordering Service

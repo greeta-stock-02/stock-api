@@ -36,11 +36,10 @@ public class OrdersCommandController {
 	@PostMapping
 	public OrderSummary createOrder(@Valid @RequestBody OrderCreateRest order) {
 
-		String userId = "27b95829-4f3f-4ddf-8983-151ba010e35b";
 		String orderId = UUID.randomUUID().toString();
 
-		CreateOrderCommand createOrderCommand = CreateOrderCommand.builder().addressId(order.getAddressId())
-				.productId(order.getProductId()).userId(userId).quantity(order.getQuantity()).orderId(orderId)
+		CreateOrderCommand createOrderCommand = CreateOrderCommand.builder()
+				.productId(order.getProductId()).quantity(order.getQuantity()).orderId(orderId)
 				.orderStatus(OrderStatus.CREATED).build();
 
 		SubscriptionQueryResult<OrderSummary, OrderSummary> queryResult = queryGateway.subscriptionQuery(

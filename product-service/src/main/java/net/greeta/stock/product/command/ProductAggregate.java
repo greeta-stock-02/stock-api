@@ -1,8 +1,6 @@
 package net.greeta.stock.product.command;
 
-import net.greeta.stock.core.commands.CancelProductReservationCommand;
 import net.greeta.stock.core.commands.ReserveProductCommand;
-import net.greeta.stock.core.events.order.ProductReservationCancelledEvent;
 import net.greeta.stock.core.events.order.ProductReservedEvent;
 import net.greeta.stock.core.events.product.ProductCreatedEvent;
 import org.axonframework.commandhandling.CommandHandler;
@@ -50,7 +48,7 @@ public class ProductAggregate {
 	@CommandHandler
 	public void handle(ReserveProductCommand reserveProductCommand) {
 		
-		if(quantity < reserveProductCommand.getQuantity()) {
+		if (quantity < reserveProductCommand.getQuantity()) {
 			throw new IllegalArgumentException("Insufficient number of items in stock");
 		}
 		
@@ -58,33 +56,10 @@ public class ProductAggregate {
 				.orderId(reserveProductCommand.getOrderId())
 				.productId(reserveProductCommand.getProductId())
 				.quantity(reserveProductCommand.getQuantity())
-				.userId(reserveProductCommand.getUserId())
 				.build();
 		
 		AggregateLifecycle.apply(productReservedEvent);
 		
-	}
-	
-	@CommandHandler
-	public void handle(CancelProductReservationCommand cancelProductReservationCommand) {
-		
-		ProductReservationCancelledEvent productReservationCancelledEvent = 
-				ProductReservationCancelledEvent.builder()
-				.orderId(cancelProductReservationCommand.getOrderId())
-				.productId(cancelProductReservationCommand.getProductId())
-				.quantity(cancelProductReservationCommand.getQuantity())
-				.reason(cancelProductReservationCommand.getReason())
-				.userId(cancelProductReservationCommand.getUserId())
-				.build();
-		
-		AggregateLifecycle.apply(productReservationCancelledEvent);
-		
-	}
-	
-	
-	@EventSourcingHandler
-	public void on(ProductReservationCancelledEvent productReservationCancelledEvent) {
-		this.quantity += productReservationCancelledEvent.getQuantity();
 	}
 	
 	

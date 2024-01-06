@@ -1,4 +1,2 @@
 CREATE DATABASE productdb;
-CREATE DATABASE paymentdb;
 CREATE DATABASE orderdb;
-CREATE DATABASE restaurantdb;

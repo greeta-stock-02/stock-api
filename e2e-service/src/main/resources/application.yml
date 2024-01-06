@@ -1,0 +1,19 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  datasource:
+    order:
+      username: postgres
+      password: postgres
+      url: jdbc:postgresql://stock-postgres:5432/orderdb
+      hikari:
+        connection-timeout: 2000 #ms
+        maximum-pool-size: 5
+    product:
+      username: postgres
+      password: postgres
+      url: jdbc:postgresql://stock-postgres:5432/productdb
+      hikari:
+        connection-timeout: 2000 #ms
+        maximum-pool-size: 5
