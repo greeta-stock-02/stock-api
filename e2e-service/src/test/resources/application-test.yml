@@ -2,8 +2,3 @@ spring.cloud.openfeign.client.config.order.url=http://localhost:9000/order
 spring.cloud.openfeign.client.config.product.url=http://localhost:9000/product
 spring.cloud.openfeign.client.config.axon.url=http://localhost:8024/v1/public
 spring.cloud.openfeign.client.config.oauth2.url=http://localhost:8080
-
-security.oauth2.client-id=stock-app
-security.oauth2.grant-type=password
-security.oauth2.username=admin
-security.oauth2.password=admin

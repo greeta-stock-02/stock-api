@@ -2,6 +2,19 @@ spring:
   application:
     name: e2e
 
+  cloud:
+    openfeign:
+      client:
+        config:
+          order:
+            url: http://localhost:9000/order
+          product:
+            url: http://localhost:9000/product
+          axon:
+            url: http://localhost:8024/v1/public
+          oauth2:
+            url: http://localhost:8080
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -20,3 +33,10 @@ spring:
       hikari:
         connection-timeout: 2000 #ms
         maximum-pool-size: 5
+
+security:
+  oauth2:
+    client-id: stock-app
+    grant-type: password
+    username: admin
+    password: admin

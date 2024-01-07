@@ -1,4 +1,4 @@
-package net.greeta.stock;
+package net.greeta.stock.client;
 
 import feign.Headers;
 import feign.Param;
@@ -16,5 +16,5 @@ public interface OAuth2Client {
 
     @PostMapping(value = "/realms/stock-realm/protocol/openid-connect/token",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    String getToken(@RequestBody Map<String, ?> form);
+    Oauth2TokenDto getToken(@RequestBody Map<String, ?> form);
 }

@@ -1,4 +1,4 @@
-package net.greeta.stock;
+package net.greeta.stock.testdata;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
