@@ -58,7 +58,7 @@ spring:
           enabled: true
       routes:
         - id: product
-          uri: ${PRODUCT_SERVICE_URL:http://localhost:9002}
+          uri: ${PRODUCT_SERVICE_URL:http://localhost:9001}
           predicates:
             - Path=/product/**
           filters:
@@ -69,7 +69,7 @@ spring:
                 fallbackUri: forward:/stock-fallback
 
         - id: order
-          uri: ${ORDER_SERVICE_URL:http://localhost:9004}
+          uri: ${ORDER_SERVICE_URL:http://localhost:9002}
           predicates:
             - Path=/order/**
           filters:

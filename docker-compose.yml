@@ -22,20 +22,9 @@ services:
     networks:
       - stock
 
-  stock-mongodb:
-    image: mongo:6.0.6
-    container_name: "stock-mongodb"
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
-    healthcheck:
-      test: "echo 'db.stats().ok' | mongosh localhost:27017/foodorderingdb --quiet"
-    networks:
-      - stock
-
-  stock-redis:
+  gateway-redis:
     image: "redis:7.0"
-    container_name: "stock-redis"
+    container_name: "gateway-redis"
     ports:
       - 6379:6379
     networks:
@@ -104,20 +93,6 @@ services:
       - '8024:8024'
       - '8124:8124'
       - '8224:8224'
-    networks:
-      - stock
-
-  stock-mysql:
-    image: mysql:8.0.33
-    container_name: "stock-mysql"
-    restart: unless-stopped
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=secret
-      - MYSQL_DATABASE=customerdb
-    healthcheck:
-      test: "mysqladmin ping -u root -p$${MYSQL_ROOT_PASSWORD}"
     networks:
       - stock
 

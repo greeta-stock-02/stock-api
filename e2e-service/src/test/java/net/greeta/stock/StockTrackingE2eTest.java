@@ -10,9 +10,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,6 +37,12 @@ public class StockTrackingE2eTest {
     private ProductClient productClient;
 
     @Autowired
+    private AxonClient axonClient;
+
+    @Autowired
+    private OAuth2Client oAuth2Client;
+
+    @Autowired
     private OrderTestDataService orderTestDataService;
 
     @Autowired
@@ -38,6 +50,14 @@ public class StockTrackingE2eTest {
 
     @BeforeEach
     void cleanup() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "admin");
+        params.put("password", "admin");
+        params.put("grant_type", "password");
+        params.put("client_id", "stock-app");
+        var result = axonClient.purgeEvents();
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        var token = oAuth2Client.getToken(params);
         orderTestDataService.resetDatabase();
         productTestDataService.resetDatabase();
     }

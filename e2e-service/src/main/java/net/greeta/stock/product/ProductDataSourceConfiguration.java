@@ -20,7 +20,6 @@ public class ProductDataSourceConfiguration {
     }
 
     @Bean
-    @Primary
     @ConfigurationProperties("spring.datasource.product.hikari")
     public DataSource productDataSource() {
         return productDataSourceProperties()

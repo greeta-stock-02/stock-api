@@ -11,13 +11,13 @@ services:
     image: "product-service"
     container_name: "product"
     ports:
-      - 9002:9002
-      - 8002:8002
+      - 9001:9001
+      - 8001:8001
     environment:
-      - SERVER_PORT=9002
+      - SERVER_PORT=9001
       - BPL_JVM_THREAD_COUNT=50
       - BPL_DEBUG_ENABLED=true
-      - BPL_DEBUG_PORT=8002
+      - BPL_DEBUG_PORT=8001
       - SPRING_KEYCLOAK_SERVER_URL=http://stock-keycloak:8080
       - SPRING_KEYCLOAK_SERVER_EXTERNAL_URL=http://localhost:8080
       - ZIPKIN_HOST=zipkin
@@ -29,13 +29,13 @@ services:
     image: "order-service"
     container_name: "order"
     ports:
-      - 9004:9004
-      - 8004:8004
+      - 9002:9002
+      - 8002:8002
     environment:
-      - SERVER_PORT=9004
+      - SERVER_PORT=9002
       - BPL_JVM_THREAD_COUNT=50
       - BPL_DEBUG_ENABLED=true
-      - BPL_DEBUG_PORT=8004
+      - BPL_DEBUG_PORT=8002
       - SPRING_KEYCLOAK_SERVER_URL=http://stock-keycloak:8080
       - SPRING_KEYCLOAK_SERVER_EXTERNAL_URL=http://localhost:8080
       - ZIPKIN_HOST=zipkin
@@ -53,9 +53,9 @@ services:
       # Buildpacks environment variable to enable debug through a socket on port 8000
       - BPL_DEBUG_ENABLED=true
       - BPL_DEBUG_PORT=8000
-      - PRODUCT_SERVICE_URL=http://product:9002
-      - ORDER_SERVICE_URL=http://order:9004
-      - SPRING_REDIS_HOST=stock-redis
+      - PRODUCT_SERVICE_URL=http://product:9001
+      - ORDER_SERVICE_URL=http://order:9002
+      - SPRING_REDIS_HOST=gateway-redis
       - SPRING_KEYCLOAK_SERVER_URL=http://stock-keycloak:8080
       - SPRING_KEYCLOAK_SERVER_EXTERNAL_URL=http://localhost:8080
     networks:
