@@ -3,6 +3,7 @@ package net.greeta.stock.helper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -12,9 +13,9 @@ public class RetryHelper {
     public static final Duration TIMEOUT = Duration.ofSeconds(20);
 
     public static <T> T retry(Duration delay, Duration timeout, Supplier<T> test) {
-        final long startTime = System.currentTimeMillis();
+        final long startTime = Instant.now().toEpochMilli();
         T result = null;
-        while (System.currentTimeMillis() - startTime < timeout.toMillis()) {
+        while (Instant.now().toEpochMilli() - startTime < timeout.toMillis()) {
             try {
                 TimeUnit.MILLISECONDS.sleep(delay.toMillis());
                 result = test.get();

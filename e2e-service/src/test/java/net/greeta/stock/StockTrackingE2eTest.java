@@ -30,31 +30,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(locations = {
         "classpath:application.yml"
 })
-public class StockTrackingE2eTest {
+public class StockTrackingE2eTest extends E2eTest {
 
     @Autowired
     private OrderClient orderClient;
 
     @Autowired
     private ProductClient productClient;
-
-    @Autowired
-    private AxonClient axonClient;
-
-    @Autowired
-    private OrderTestDataService orderTestDataService;
-
-    @Autowired
-    private ProductTestDataService productTestDataService;
-
-    @BeforeEach
-    @SneakyThrows
-    void cleanup() {
-        var result = axonClient.purgeEvents();
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        orderTestDataService.resetDatabase();
-        productTestDataService.resetDatabase();
-    }
 
     @Test
     void createProductTest() {

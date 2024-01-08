@@ -1,28 +1,26 @@
 package net.greeta.stock;
 
 import lombok.SneakyThrows;
-import net.greeta.stock.client.AxonClient;
+import lombok.extern.slf4j.Slf4j;
 import net.greeta.stock.helper.RetryHelper;
-import net.greeta.stock.order.OrderClient;
-import net.greeta.stock.order.OrderTestDataService;
-import net.greeta.stock.order.dto.OrderCreateDto;
+import net.greeta.stock.order.OrderTestHelper;
 import net.greeta.stock.order.dto.OrderSummaryDto;
 import net.greeta.stock.order.model.OrderStatus;
+import net.greeta.stock.product.Product2Client;
 import net.greeta.stock.product.ProductClient;
-import net.greeta.stock.product.ProductTestDataService;
 import net.greeta.stock.product.dto.CreateProductDto;
 import net.greeta.stock.product.dto.ProductDto;
-import net.greeta.stock.helper.CalculationHelper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,62 +28,61 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(locations = {
         "classpath:application.yml"
 })
-public class StockTrackingConcurrencyE2eTest {
-
-    @Autowired
-    private OrderClient orderClient;
+@Slf4j
+public class StockTrackingConcurrencyE2eTest extends E2eTest {
 
     @Autowired
     private ProductClient productClient;
 
     @Autowired
-    private AxonClient axonClient;
+    private Product2Client product2Client;
 
     @Autowired
-    private OrderTestDataService orderTestDataService;
+    private OrderTestHelper orderTestHelper;
 
-    @Autowired
-    private ProductTestDataService productTestDataService;
-
-    @BeforeEach
+    @Test
     @SneakyThrows
-    void cleanup() {
-        var result = axonClient.purgeEvents();
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        orderTestDataService.resetDatabase();
-        productTestDataService.resetDatabase();
-    }
-
-    @Test
-    void createProductTest() {
-        CreateProductDto product = new CreateProductDto("test", BigDecimal.valueOf(10.00), 5);
+    void createParallelOrdersThenStockIsZeroTest() {
+        CreateProductDto product = new CreateProductDto("test", BigDecimal.valueOf(10.00), 20);
         String productId = productClient.create(product);
         assertNotNull(productId);
         ProductDto result = RetryHelper.retry(() -> productClient.get(productId));
-        assertEquals(productId, result.getProductId());
-        assertEquals("test", result.getTitle());
-        assertTrue(CalculationHelper.equalsToScale2(BigDecimal.valueOf(10.00), result.getPrice()));
-        assertEquals(5, result.getQuantity());
-    }
+        assertEquals(20, result.getQuantity());
 
-    @Test
-    void createOrderThenProductQuantityReducedTest() {
-        CreateProductDto product = new CreateProductDto("test", BigDecimal.valueOf(10.00), 5);
-        String productId = productClient.create(product);
-        assertNotNull(productId);
-        ProductDto result = RetryHelper.retry(() -> productClient.get(productId));
-        assertEquals(5, result.getQuantity());
+        // Start the clock
+        long start = Instant.now().toEpochMilli();
 
-        OrderCreateDto order = new OrderCreateDto(productId, 2);
-        OrderSummaryDto orderSummary = orderClient.create(order);
-        assertNotNull(orderSummary.getOrderId());
-        assertEquals(OrderStatus.APPROVED, orderSummary.getOrderStatus());
+        int numberOfOrders = 10;
+        List<CompletableFuture<OrderSummaryDto>> createdOrders = new ArrayList<>();
+        // Kick of multiple, asynchronous lookups
+        for (int i = 0; i < numberOfOrders; i++) {
+            CompletableFuture<OrderSummaryDto> orderSummary = orderTestHelper.createAsyncOrder(productId, 2, i);
+            createdOrders.add(orderSummary);
+        }
 
-        Boolean quantityReducedTo3 = RetryHelper.retry(() -> {
-            var test = productClient.get(productId);
-            return test.getQuantity() == 3;
+        // Wait until they are all done
+        CompletableFuture.allOf(createdOrders.toArray(new CompletableFuture[0])).join();
+
+        log.info("Elapsed time: " + (Instant.now().toEpochMilli() - start));
+        for (CompletableFuture<OrderSummaryDto> orderSummary: createdOrders) {
+            assertNotNull(orderSummary.get().getOrderId());
+            assertEquals(OrderStatus.APPROVED, orderSummary.get().getOrderStatus());
+            log.info("--> " + orderSummary.get().getOrderId());
+        }
+
+        AtomicInteger productClientHash = new AtomicInteger(0);
+        Boolean quantityReducedToZero = RetryHelper.retry(() -> {
+            var test = productClientHash.getAndIncrement() % 2 == 0
+                    ? productClient.get(productId)
+                    : product2Client.get(productId);
+            return test.getQuantity() == 0;
         });
-        assertTrue(quantityReducedTo3);
+        assertTrue(quantityReducedToZero);
+
+        //Check that the next order is rejected because the stock is zero
+        OrderSummaryDto rejectedOrder = orderTestHelper.createOrder(productId, 1);
+        assertNotNull(rejectedOrder.getOrderId());
+        assertEquals(OrderStatus.REJECTED, rejectedOrder.getOrderStatus());
     }
 
 

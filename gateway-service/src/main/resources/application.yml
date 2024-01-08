@@ -68,12 +68,46 @@ spring:
                 name: productCircuitBreaker
                 fallbackUri: forward:/stock-fallback
 
+        - id: product2
+          uri: ${PRODUCT2_SERVICE_URL:http://localhost:9005}
+          predicates:
+            - Path=/product2/**
+          filters:
+            - RewritePath=/product2/(?<path>.*), /$\{path}
+            - name: CircuitBreaker
+              args:
+                name: productCircuitBreaker
+                fallbackUri: forward:/stock-fallback
+
+
         - id: order
           uri: ${ORDER_SERVICE_URL:http://localhost:9002}
           predicates:
             - Path=/order/**
           filters:
             - RewritePath=/order/(?<path>.*), /$\{path}
+            - name: CircuitBreaker
+              args:
+                name: orderCircuitBreaker
+                fallbackUri: forward:/stock-fallback
+
+        - id: order2
+          uri: ${ORDER2_SERVICE_URL:http://localhost:9003}
+          predicates:
+            - Path=/order2/**
+          filters:
+            - RewritePath=/order2/(?<path>.*), /$\{path}
+            - name: CircuitBreaker
+              args:
+                name: orderCircuitBreaker
+                fallbackUri: forward:/stock-fallback
+
+        - id: order3
+          uri: ${ORDER3_SERVICE_URL:http://localhost:9004}
+          predicates:
+            - Path=/order3/**
+          filters:
+            - RewritePath=/order3/(?<path>.*), /$\{path}
             - name: CircuitBreaker
               args:
                 name: orderCircuitBreaker
@@ -121,7 +155,7 @@ resilience4j:
   timelimiter:
     configs:
       default:
-        timeoutDuration: 10s
+        timeoutDuration: 20s
 
 logging:
   group:
@@ -175,3 +209,9 @@ springdoc:
         name: Product Service
       - url: /order/v3/api-docs
         name: Order Service
+      - url: /product2/v3/api-docs
+        name: Product2 Service
+      - url: /order2/v3/api-docs
+        name: Order2 Service
+      - url: /order3/v3/api-docs
+        name: Order3 Service
