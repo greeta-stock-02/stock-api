@@ -1,5 +1,6 @@
 package net.greeta.stock.order.saga;
 
+import net.greeta.stock.order.command.ApproveOrderCommand;
 import net.greeta.stock.product.commands.ReserveProductCommand;
 import net.greeta.stock.order.events.OrderApprovedEvent;
 import net.greeta.stock.order.events.OrderCreatedEvent;
@@ -78,6 +79,12 @@ public class OrderSaga {
 		// TODO: Process user payment
         LOGGER.info("ProductReservedEvent is called for productId: "+ productReservedEvent.getProductId() +
         		" and orderId: " + productReservedEvent.getOrderId());
+
+		// Send an ApproveOrderCommand
+		ApproveOrderCommand approveOrderCommand =
+				new ApproveOrderCommand(productReservedEvent.getOrderId());
+
+		commandGateway.send(approveOrderCommand);
  
 	}
 	

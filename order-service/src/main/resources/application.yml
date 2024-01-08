@@ -5,8 +5,8 @@ server:
   shutdown: graceful
   forward-headers-strategy: framework
   tomcat:
-    connection-timeout: 2s
-    keep-alive-timeout: 15s
+    connection-timeout: 10s
+    keep-alive-timeout: 20s
     threads:
       max: 50
       min-spare: 5
@@ -28,7 +28,7 @@ spring:
     password: postgres
     url: jdbc:postgresql://stock-postgres:5432/orderdb
     hikari:
-      connection-timeout: 2000 #ms
+      connection-timeout: 6000 #ms
       maximum-pool-size: 5
   keycloak:
     server-url: http://localhost:8080
@@ -93,6 +93,8 @@ openapi:
 
 axon:
   eventhandling:
+    tokenstore:
+      claim-timeout: 4s
     processors:
       order-group:
         mode: tracking

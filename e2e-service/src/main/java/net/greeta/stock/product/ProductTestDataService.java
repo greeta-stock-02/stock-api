@@ -24,6 +24,10 @@ public class ProductTestDataService extends TestDataService {
     public void resetDatabase() {
         executeString("DELETE FROM products");
         executeString("DELETE FROM productlookup");
+        executeString("DELETE FROM token_entry");
+        executeString("DELETE FROM association_value_entry");
+        executeString("DELETE FROM dead_letter_entry");
+        executeString("DELETE FROM saga_entry");
     }
 
 }

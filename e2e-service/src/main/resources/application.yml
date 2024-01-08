@@ -6,8 +6,11 @@ spring:
     openfeign:
       client:
         config:
+          default:
+            readTimeout: 10000
+            connectTimeout: 20000
           order:
-            url: http://localhost:9000/order
+            url: http://localhost:9002
           product:
             url: http://localhost:9000/product
           axon:

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(locations = {
         "classpath:application.yml"
 })
-public class StockTrackingE2eTest {
+public class StockTrackingConcurrencyE2eTest {
 
     @Autowired
     private OrderClient orderClient;
@@ -90,3 +90,4 @@ public class StockTrackingE2eTest {
 
 
 }
+
