@@ -94,6 +94,10 @@ sh docker-app-restart.sh order
 
 ### Remote Debugging
 
+- use `BPL_DEBUG_PORT` property in `docker-app-compose.yml` for remote debugging port of the spring boot application (see `Port` in the screenshot)
+
+- select spring boot application from the dropdown list (see `Use module classpath` in the screenshot)
+
 ![Configuration to debug a containerized Java application from IntelliJ IDEA](documentation/06-14.png)
 
 #### Axon Server Console
